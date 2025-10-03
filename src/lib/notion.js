@@ -1,10 +1,14 @@
 // src/lib/notion.js
 import { Client } from '@notionhq/client';
 
+// Inicializa el cliente de Notion con la clave de API
+// Esta clave NUNCA debe estar expuesta en el código del cliente
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
 
+// IDs de las bases de datos de Notion
+// Estos IDs tampoco deben estar expuestos en el código del cliente
 export const DATABASE_IDS = {
   HERO: process.env.NOTION_HERO_DB_ID || '',
   LATEST_VIDEOS: process.env.NOTION_LATEST_VIDEOS_DB_ID || '',
@@ -96,13 +100,13 @@ export async function getTestimonials() {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.TESTIMONIALS,
       filter: {
-        property: 'Published',
+        property: 'Publicado',
         checkbox: {
           equals: true
         }
       },
       sorts: [
-        { property: 'Date', direction: 'descending' }
+        { property: 'Fecha', direction: 'descending' }
       ],
       page_size: 8
     });
@@ -113,7 +117,7 @@ export async function getTestimonials() {
   }
 }
 
-// --- NUEVA FUNCIÓN: Obtener Preguntas de los Miembros ---
+// --- CORREGIDA: Función para obtener preguntas de los miembros ---
 export async function getMemberQuestions() {
   if (!DATABASE_IDS.QUESTIONS) {
     console.error('NOTION_QUESTIONS_DB_ID no está definido');
@@ -123,22 +127,23 @@ export async function getMemberQuestions() {
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.QUESTIONS,
-      // Opcional: Filtrar si es necesario (por ejemplo, si se añaden otras propiedades como 'Procesado')
-      // filter: { ... },
-      // Ordenar por fecha de creación (o propiedad de fecha) descendente para obtener las más recientes
+      filter: {
+        property: 'Publicada', // Usamos 'Publicada' en lugar de 'Answered'
+        checkbox: {
+          equals: true // Solo preguntas publicadas
+        }
+      },
       sorts: [
-        { property: 'Fecha', direction: 'descending' } // Cambia 'Fecha' por el NOMBRE EXACTO de tu propiedad de fecha en Notion
+        { property: 'Fecha', direction: 'descending' } // Ordenar por fecha descendente
       ],
       page_size: 10 // Limitar a las últimas 10 preguntas
     });
-    // Mapear los resultados usando una nueva función específica para preguntas de Fillout
     return response.results.map(pageToMemberQuestionData);
   } catch (error) {
     console.error('Error al obtener preguntas de los miembros desde Notion:', error);
     return [];
   }
 }
-
 
 export async function getAboutData() {
   if (!DATABASE_IDS.ABOUT) {
@@ -147,10 +152,9 @@ export async function getAboutData() {
   }
 
   try {
-    // Consultar la base de datos ABOUT
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.ABOUT,
-      page_size: 1 // Asumiendo un solo registro de información general
+      page_size: 1
     });
 
     if (response.results.length === 0) {
@@ -159,57 +163,20 @@ export async function getAboutData() {
     }
 
     const aboutRecord = response.results[0];
-
-    // Obtener el ID de la página detallada desde la base de datos
-    // Asumiendo que el nombre de la propiedad es 'About Page ID' en Notion
-    const detailedPageId = getTextProperty(aboutRecord.properties['About Page ID']); // Cambia 'About Page ID' por el nombre exacto en Notion
-
-    // Obtener el contenido de la página detallada
-    let detailedContent = null;
-    if (detailedPageId) {
-      try {
-        detailedContent = await getDetailedPageContent(detailedPageId);
-      } catch (error) {
-        console.error('Error al obtener el contenido de la página detallada de About:', error);
-        // Puedes optar por continuar con el resto de la info y sin el contenido detallado
-      }
-    }
-
     return [{
       id: aboutRecord.id,
-      title: getTextProperty(aboutRecord.properties.Title), // Asumiendo propiedad 'Title'
-      description: getTextProperty(aboutRecord.properties.Description), // Asumiendo propiedad 'Description'
-      mission: getTextProperty(aboutRecord.properties.Mission), // Asumiendo propiedad 'Mission'
-      vision: getTextProperty(aboutRecord.properties.Vision), // Asumiendo propiedad 'Vision'
-      values: getMultilineTextProperty(aboutRecord.properties.Values), // Asumiendo propiedad 'Values'
-      image: getTextProperty(aboutRecord.properties['Image URL']), // Asumiendo propiedad 'Image URL'
-      detailedContent: detailedContent, // Agregar el contenido detallado obtenido de la página
+      title: getTextProperty(aboutRecord.properties.Title),
+      description: getTextProperty(aboutRecord.properties.Description),
+      mission: getTextProperty(aboutRecord.properties.Mission),
+      vision: getTextProperty(aboutRecord.properties.Vision),
+      values: getMultilineTextProperty(aboutRecord.properties.Values),
+      image: getTextProperty(aboutRecord.properties['Image']),
     }];
   } catch (error) {
     console.error('Error al obtener datos de "Sobre nosotros" desde la base:', error);
     return [];
   }
 }
-
-// Nueva función para obtener el contenido de la página detallada
-async function getDetailedPageContent(pageId) {
-  // Verificar si el ID tiene el formato correcto (32 caracteres alfanuméricos)
-  if (!pageId || pageId.length !== 32) {
-    throw new Error('ID de página inválido para obtener contenido detallado.');
-  }
-
-  try {
-    // Obtener bloques de la página
-    const response = await notion.blocks.children.list({
-      block_id: pageId,
-    });
-    return response.results;
-  } catch (error) {
-    console.error('Error al listar bloques de la página detallada:', error);
-    throw error; // Re-lanzar para manejarlo en getAboutData
-  }
-}
-
 
 // --- FUNCIONES DE MAPEO ---
 function pageToHeroData(page) {
@@ -218,7 +185,7 @@ function pageToHeroData(page) {
     title: getTextProperty(page.properties.Title),
     subtitle: getTextProperty(page.properties.Subtitle),
     description: getTextProperty(page.properties.Description),
-    ctaText: getTextProperty(page.properties.CTAText), // Corregido: añadido (page.properties.CTAText)
+    ctaText: getTextProperty(page.properties.CTAText) || 'Suscríbete',
     ctaLink: getTextProperty(page.properties.CTALink) || '#',
   };
 }
@@ -248,31 +215,41 @@ function pageToNextLiveData(page) {
 function pageToTestimonialData(page) {
   return {
     id: page.id,
-    name: getTextProperty(page.properties.Name),
-    testimonial: getTextProperty(page.properties.Testimonial),
-    date: getDateProperty(page.properties.Date),
-    location: getTextProperty(page.properties.Location),
+    name: getTextProperty(page.properties.Nombre),
+    testimonial: getTextProperty(page.properties.Testimonio),
+    date: getDateProperty(page.properties.Fecha),
+    location: getTextProperty(page.properties.Ubicacion),
   };
 }
 
-// --- NUEVA FUNCIÓN DE MAPEO: Pregunta de Miembro ---
-// Asegúrate de usar los NOMBRES EXACTOS de las propiedades en Notion
+// --- CORREGIDA: Función de mapeo para preguntas de miembros ---
 function pageToMemberQuestionData(page) {
   return {
     id: page.id,
     // *************************************************************************
-    // CAMBIA 'Texto Pregunta' por el NOMBRE EXACTO de la columna en Notion
-    question: getTextProperty(page.properties['Pregunta']), // <-- AQUÍ (columna con el texto de la pregunta)
+    // USAMOS LOS NOMBRES EXACTOS DE LAS COLUMNAS EN TU BASE DE DATOS NOTION
+    question: getTextProperty(page.properties['Pregunta']), // Columna 'Pregunta'
+    askedBy: getTextProperty(page.properties['Nombre']),    // Columna 'Nombre'
+    country: getTextProperty(page.properties['Pais']),      // Columna 'Pais'
+    date: getDateProperty(page.properties['Fecha']) || page.created_time, // Columna 'fecha'
     // *************************************************************************
-    // *************************************************************************
-    // CAMBIA 'TuNombre' por el NOMBRE EXACTO de la columna en Notion
-    askedBy: getTextProperty(page.properties['TuNombre']),       // <-- ACTUALIZADO: Ahora usa 'TuNombre'
-    // *************************************************************************
-    country: getTextProperty(page.properties['País']),      // <-- Asegúrate de que 'País' sea correcto
-    date: getDateProperty(page.properties['Fecha']) || page.created_time // <-- Asegúrate de que 'Fecha' sea correcto
   };
 }
 
+function pageToAboutData(page) {
+  return {
+    id: page.id,
+    title: getTextProperty(page.properties.Title), // Asumiendo propiedad 'Title'
+    description: getTextProperty(page.properties.Description), // Asumiendo propiedad 'Description'
+    mission: getTextProperty(page.properties.Mission), // Asumiendo propiedad 'Mission'
+    vision: getTextProperty(page.properties.Vision), // Asumiendo propiedad 'Vision'
+    values: getMultilineTextProperty(page.properties.Values), // Asumiendo propiedad 'Values'
+    // *************************************************************************
+    // CORREGIDO: Ahora usamos getTextProperty para una URL simple
+    image: getTextProperty(page.properties['Image']), // <-- Cambia 'Image' por el NOMBRE EXACTO de tu columna en Notion
+    // *************************************************************************
+  };
+}
 
 // --- FUNCIONES AUXILIARES ---
 function getTextProperty(property) {
@@ -287,16 +264,7 @@ function getMultilineTextProperty(property) {
     .filter(content => content.trim() !== '');
 }
 
-// Asegúrate de que getDateProperty maneje tanto propiedades Date como el created_time de la página
 function getDateProperty(property) {
-  if (!property) return null;
-  // Si es una propiedad Date de Notion
-  if (property.date) {
-    return property.date.start;
-  }
-  // Si se pasa el created_time de la página directamente (string ISO)
-  if (typeof property === 'string' && !isNaN(Date.parse(property))) {
-     return property;
-  }
-  return null;
+  if (!property || !property.date) return null;
+  return property.date.start;
 }

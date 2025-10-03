@@ -1,8 +1,8 @@
 // src/components/testimonials/Testimonials.js
 import { getTestimonials } from '@/lib/notion';
-import { TestimonioCard } from './TestimonioCard';
+import { TestimonialCard } from './TestimonialCard';
 
-export default async function Testimonials({ id }) { // Recibe el id como prop
+export default async function Testimonials({ id }) {
   const testimonials = await getTestimonials();
 
   const fallbackTestimonials = [
@@ -32,7 +32,7 @@ export default async function Testimonials({ id }) { // Recibe el id como prop
   const testimonialList = testimonials.length > 0 ? testimonials : fallbackTestimonials;
 
   return (
-    <section className="py-12 md:py-16 bg-amber-50" id={id}> {/* Usa el id aquí */}
+    <section className="py-12 md:py-16 bg-amber-50" id={id}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Testimonios de nuestra comunidad</h2>
@@ -43,13 +43,16 @@ export default async function Testimonials({ id }) { // Recibe el id como prop
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonialList.map((testimonial) => (
-            <TestimonioCard key={testimonial.id} testimonial={testimonial} />
+            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
           ))}
         </div>
 
         <div className="mt-12 text-center">
+          {/* Botón actualizado con el nuevo enlace de WhatsApp */}
           <a
-            href="#next-live"
+            href="https://chat.whatsapp.com/JSjT5PypZgPGbuj9wny0Qa" // <-- Nuevo enlace de WhatsApp
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white rounded-md font-medium hover:bg-amber-700 transition-colors"
           >
             Únete a nuestra comunidad

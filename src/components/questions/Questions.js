@@ -1,9 +1,29 @@
 // src/components/questions/Questions.js
 import { getMemberQuestions } from '@/lib/notion';
 import { QuestionsCard } from './QuestionsCard';
+import Form from '@/components/form/Form'; // Importamos el componente Form
 
-export default async function Questions({ id, openForm }) {
+export default async function Questions({ id }) {
   const questions = await getMemberQuestions();
+
+  const fallbackQuestions = [
+    {
+      id: '1',
+      question: '¿Cómo puedo aplicar la Palabra de Dios en mi matrimonio?',
+      askedBy: 'Juan Pérez',
+      country: 'Buenos Aires, Argentina',
+      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: '2',
+      question: '¿Qué dice la Biblia sobre la ansiedad?',
+      askedBy: 'María López',
+      country: 'México DF, México',
+      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    }
+  ];
+
+  const questionsList = questions.length > 0 ? questions : fallbackQuestions;
 
   return (
     <section className="py-12 md:py-16 bg-white" id={id}>
@@ -16,19 +36,13 @@ export default async function Questions({ id, openForm }) {
         </div>
 
         <div className="grid grid-cols-1 gap-6">
-          {questions.map((question) => (
+          {questionsList.map((question) => (
             <QuestionsCard key={question.id} question={question} />
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <button
-            onClick={openForm}
-            className="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white rounded-md font-medium hover:bg-amber-700 transition-colors"
-          >
-            Enviar una pregunta
-          </button>
-        </div>
+        {/* Componente Form para el botón y popup del formulario */}
+        <Form />
       </div>
     </section>
   );

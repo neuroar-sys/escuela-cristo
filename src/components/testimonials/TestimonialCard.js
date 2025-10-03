@@ -1,13 +1,13 @@
-// src/components/testimonials/TestimonioCard.js
+// src/components/testimonials/TestimonialCard.js
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-export function TestimonioCard({ testimonial }) {
+export function TestimonialCard({ testimonial }) {
   const formattedDate = testimonial.date ? format(new Date(testimonial.date), "d 'de' MMMM yyyy", { locale: es }) : '';
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
-      <div className="flex items-center mb-4">
+      <div className="flex items-start mb-4">
         <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mr-3">
           <span className="text-amber-800 font-bold">{testimonial.name.charAt(0)}</span>
         </div>
@@ -18,7 +18,9 @@ export function TestimonioCard({ testimonial }) {
           )}
         </div>
       </div>
+
       <blockquote className="text-gray-600 italic mb-4">"{testimonial.testimonial}"</blockquote>
+
       {testimonial.date && (
         <div className="text-xs text-gray-400">
           {formattedDate}

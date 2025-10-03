@@ -13,11 +13,16 @@ export function QuestionsCard({ question }) {
         </div>
         <div>
           <h4 className="font-bold text-gray-900">{question.askedBy}</h4>
-          <p className="text-sm text-gray-500">{question.country} • {formattedDate}</p>
+          {question.country && (
+            <p className="text-sm text-gray-500">{question.country}</p>
+          )}
+          {question.date && (
+            <p className="text-xs text-gray-500">{formattedDate}</p>
+          )}
         </div>
       </div>
 
-      <p className="text-gray-700 mb-4">
+      <p className="text-gray-700">
         <span className="font-medium">Pregunta:</span> {question.question}
       </p>
     </div>

@@ -30,14 +30,12 @@ export function VideoCard({ video }) {
         )}
         <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{video.title}</h3>
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{video.description}</p>
-        {video.date && (
-          <div className="flex items-center text-sm text-gray-500">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {formattedDate}
-          </div>
-        )}
+        <div className="flex items-center text-sm text-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {formattedDate}
+        </div>
       </div>
     </div>
   );

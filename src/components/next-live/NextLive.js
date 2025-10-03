@@ -3,7 +3,7 @@ import { getNextLive } from '@/lib/notion';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-export default async function NextLive({ id }) { // Recibe el id como prop
+export default async function NextLive({ id }) {
   const nextLiveData = await getNextLive();
   const nextLive = nextLiveData[0] || {
     title: "Título del próximo vivo",
@@ -18,7 +18,7 @@ export default async function NextLive({ id }) { // Recibe el id como prop
   const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
   return (
-    <section className="py-12 md:py-16 bg-amber-50" id={id}> {/* Usa el id aquí */}
+    <section className="py-12 md:py-16 bg-amber-50" id={id}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <span className="inline-block px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium mb-4">

@@ -2,7 +2,7 @@
 import { getLatestVideos } from '@/lib/notion';
 import { VideoCard } from './VideoCard';
 
-export default async function LatestVideos({ id }) { // Recibe el id como prop
+export default async function LatestVideos({ id }) {
   const videos = await getLatestVideos();
 
   const fallbackVideos = [
@@ -35,7 +35,7 @@ export default async function LatestVideos({ id }) { // Recibe el id como prop
   const videoList = videos.length > 0 ? videos : fallbackVideos;
 
   return (
-    <section className="py-12 md:py-16 bg-white" id={id}> {/* Usa el id aquí */}
+    <section className="py-12 md:py-16 bg-white" id={id}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Últimos videos</h2>
@@ -52,9 +52,9 @@ export default async function LatestVideos({ id }) { // Recibe el id como prop
 
         <div className="mt-12 text-center">
           <a
-            href="https://www.youtube.com/@JoaquinPensa" // Cambiado al canal central
-            target="_blank" // Abrir en nueva pestaña
-            rel="noopener noreferrer" // Seguridad
+            href="https://www.youtube.com/@JoaquinPensa"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-6 py-3 border border-amber-600 text-amber-600 rounded-md font-medium hover:bg-amber-50 transition-colors"
           >
             Ver todos los videos en YouTube

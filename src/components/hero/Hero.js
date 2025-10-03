@@ -1,9 +1,8 @@
 // src/components/hero/Hero.js
-import { getHeroData } from '@/lib/notion'; // Importamos la función nombrada
-import { getLatestVideos } from '@/lib/notion'; // Importamos la función nombrada
+import { getHeroData, getLatestVideos } from '@/lib/notion';
 
 export default async function Hero() {
-  const heroData = await getHeroData(); // <-- Usamos la función importada
+  const heroData = await getHeroData();
   const hero = heroData[0] || {
     title: "Escuela de Cristo Colectivo",
     subtitle: "Edificando el Cuerpo de Cristo por medio de la Obra Apostólica 🚧 ",
@@ -13,7 +12,7 @@ export default async function Hero() {
   };
 
   // Obtenemos los últimos videos de Notion
-  const latestVideos = await getLatestVideos(); // <-- Usamos la función importada
+  const latestVideos = await getLatestVideos();
   // Tomamos el primer video de la lista (el más reciente, según el orden en Notion o el sort definido)
   const latestVideo = latestVideos[0] || {
     // Valores por defecto si no hay videos en Notion
