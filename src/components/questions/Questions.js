@@ -1,7 +1,7 @@
 // src/components/questions/Questions.js
 import { getMemberQuestions } from '@/lib/notion';
 import { QuestionsCard } from './QuestionsCard';
-import Form from '@/components/form/Form'; // Importamos el componente Form
+import Form from '@/components/form/Form';
 
 export default async function Questions({ id }) {
   const questions = await getMemberQuestions();
@@ -12,14 +12,21 @@ export default async function Questions({ id }) {
       question: '¿Cómo puedo aplicar la Palabra de Dios en mi matrimonio?',
       askedBy: 'Juan Pérez',
       country: 'Buenos Aires, Argentina',
-      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 día atrás
     },
     {
       id: '2',
       question: '¿Qué dice la Biblia sobre la ansiedad?',
       askedBy: 'María López',
       country: 'México DF, México',
-      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 días atrás
+    },
+    {
+      id: '3',
+      question: '¿Cómo puedo perdonar de corazón?',
+      askedBy: 'Carlos Rodríguez',
+      country: 'España',
+      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 días atrás
     }
   ];
 
@@ -35,13 +42,16 @@ export default async function Questions({ id }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
+        {/* *************************************************************************
+             ACTUALIZADO: Cuadrícula para mostrar 2 o 3 tarjetas por fila en escritorio
+             ************************************************************************* */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {questionsList.map((question) => (
             <QuestionsCard key={question.id} question={question} />
           ))}
         </div>
+        {/* ************************************************************************* */}
 
-        {/* Componente Form para el botón y popup del formulario */}
         <Form />
       </div>
     </section>
