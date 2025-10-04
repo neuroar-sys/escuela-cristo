@@ -165,12 +165,12 @@ export async function getAboutData() {
     const aboutRecord = response.results[0];
     return [{
       id: aboutRecord.id,
-      title: getTextProperty(aboutRecord.properties.Title),
-      description: getTextProperty(aboutRecord.properties.Description),
-      mission: getTextProperty(aboutRecord.properties.Mission),
+      title: getTextProperty(aboutRecord.properties.Titulo),
+      description: getTextProperty(aboutRecord.properties.Descripcion),
+      mission: getTextProperty(aboutRecord.properties.Mision),
       vision: getTextProperty(aboutRecord.properties.Vision),
-      values: getMultilineTextProperty(aboutRecord.properties.Values),
-      image: getTextProperty(aboutRecord.properties['Image']),
+      values: getMultilineTextProperty(aboutRecord.properties.Valores),
+      image: getTextProperty(aboutRecord.properties['Imagen']),
     }];
   } catch (error) {
     console.error('Error al obtener datos de "Sobre nosotros" desde la base:', error);
