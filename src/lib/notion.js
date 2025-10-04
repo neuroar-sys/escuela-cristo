@@ -182,7 +182,10 @@ export async function getAboutData() {
 function pageToHeroData(page) {
   return {
     id: page.id,
-    title: getTextProperty(page.properties.Title),
+    // *************************************************************************
+    // CAMBIADO: Ahora usamos la columna personalizada "Titulo" en lugar de "Title"
+    title: getTextProperty(page.properties['Titulo']), // <-- AQUÍ: Usamos 'Titulo'
+    // *************************************************************************
     subtitle: getTextProperty(page.properties.Subtitle),
     description: getTextProperty(page.properties.Description),
     ctaText: getTextProperty(page.properties.CTAText) || 'Suscríbete',
