@@ -218,7 +218,7 @@ function pageToTestimonialData(page) {
     name: getTextProperty(page.properties.Nombre),
     testimonial: getTextProperty(page.properties.Testimonio),
     date: getDateProperty(page.properties.Fecha),
-    location: getTextProperty(page.properties.Ubicacion),
+    location: getTextProperty(page.properties.Pais),
   };
 }
 
