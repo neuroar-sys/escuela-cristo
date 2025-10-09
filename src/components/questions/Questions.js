@@ -38,7 +38,7 @@ export default async function Questions({ id }) {
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Preguntas de los miembros</h2>
           <p className="text-xl text-gray-600">
-            Aquí encontrarás las últimas preguntas realizadas por nuestra comunidad cristiana. Únete a la conversación.
+            Aquí encontrarás las últimas preguntas realizadas por nuestra comunidad. Serán respondidas en el próximo live.
           </p>
         </div>
 

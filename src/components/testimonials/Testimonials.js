@@ -37,7 +37,7 @@ export default async function Testimonials({ id }) {
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Testimonios de nuestra comunidad</h2>
           <p className="text-xl text-gray-600">
-            Descubre cómo la Escuela de Cristo Colectivo ha impactado la vida de personas de todo el mundo
+            Descubre cómo la Escuela de Cristo Colectivo alcanza a los hijos de Dios de todo el mundo
           </p>
         </div>
 
