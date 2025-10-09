@@ -189,7 +189,7 @@ function pageToHeroData(page) {
     subtitle: getTextProperty(page.properties.Subtitle),
     description: getTextProperty(page.properties.Description),
     ctaText: getTextProperty(page.properties.CTAText) || 'Suscríbete',
-    ctaLink: getTextProperty(page.properties.CTALink) || '#',
+     ctaLink: getUrlProperty(page.properties.CTALink) || 'https://www.youtube.com/@JoaquinPensa',
   };
 }
 
@@ -211,7 +211,7 @@ function pageToNextLiveData(page) {
     description: getTextProperty(page.properties.Description),
     date: getDateProperty(page.properties.Date),
     time: getTextProperty(page.properties.Time),
-    youtubeLink: getTextProperty(page.properties.YoutubeLink) || '#',
+    youtubeLink: getUrlProperty(page.properties.YoutubeLink) || '#', // <-- También usamos getUrlProperty para enlaces
   };
 }
 
@@ -271,3 +271,26 @@ function getDateProperty(property) {
   if (!property || !property.date) return null;
   return property.date.start;
 }
+// *************************************************************************
+// NUEVA FUNCIÓN AUXILIAR: Para obtener URLs de archivos o enlaces externos
+function getUrlProperty(property) {
+  if (!property) return '';
+  
+  // Si es una propiedad URL simple
+  if (property.url) {
+    return property.url;
+  }
+  
+  // Si es una propiedad Files (archivos subidos a Notion)
+  if (property.files && property.files.length > 0) {
+    const file = property.files[0];
+    if (file.file) {
+      return file.file.url; // URL temporal de archivos subidos a Notion
+    } else if (file.external) {
+      return file.external.url; // URL de archivos externos
+    }
+  }
+  
+  return ''; // Si no hay URL válida
+}
+// *************************************************************************

@@ -61,7 +61,7 @@ export default function Form() {
             </div>
             <div className="p-4 flex-grow overflow-auto">
               <iframe
-                src="https://forms.fillout.com/t/s2JbFfPVbnus"
+                src="https://noteforms.com/forms/questions-qia28p"
                 className="w-full h-[600px] md:h-[700px] rounded-lg border border-gray-200"
                 title="Formulario de Preguntas"
                 loading="lazy"
