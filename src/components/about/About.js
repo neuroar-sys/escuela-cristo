@@ -129,7 +129,7 @@ export default async function About({ id }) {
                   </svg>
                 </div>
                 <blockquote className="text-xl italic text-gray-700 mb-4">
-                  "Por tanto, id y haced discípulos a todas las naciones..."
+                 "Por tanto, id y haced discípulos a todas las naciones..."
                 </blockquote>
                 <cite className="text-gray-500">— Mateo 28:19</cite>
               </div>
