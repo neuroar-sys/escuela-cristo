@@ -38,7 +38,7 @@ export default async function LatestVideos({ id }) {
     <section className="py-12 md:py-16 bg-white" id={id}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Últimos videos</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Últimos lives</h2>
           <p className="text-xl text-gray-600">
             Explora nuestras últimas transmisiones en vivo y estudios bíblicos grabados para tu crecimiento espiritual.
           </p>

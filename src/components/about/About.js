@@ -47,7 +47,7 @@ export default async function About({ id }) {
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900">Nuestra Historia</h3>
+                    <h3 className="text-2xl font-bold text-gray-900">Llamado</h3>
                   </div>
                   <p className="text-lg text-gray-700 leading-relaxed">
                     {about.description}
@@ -90,19 +90,18 @@ export default async function About({ id }) {
             {/* Contenido visual */}
             <div className="space-y-8">
               {/* Imagen principal */}
-              <div className="rounded-3xl overflow-hidden shadow-2xl">
-                {about.image ? (
-                  <img 
-                    src={about.image} 
-                    alt="Comunidad cristiana" 
-                    className="w-full h-auto object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-96 bg-amber-100 flex items-center justify-center text-amber-800 font-bold rounded-3xl">
-                    Comunidad cristiana global
-                  </div>
-                )}
-              </div>
+              <div className="relative w-full text-amber-800 font-medium rounded-3xl px-6 py-0 text-center leading-loose h-auto min-h-[20rem] flex items-center justify-center overflow-hidden bg-amber-50 border border-amber-100 shadow-sm">
+  {/* Badge */}
+  <div className="absolute top-4 left-4 bg-white text-amber-600 text-xs font-semibold px-3 py-1 rounded-full shadow-sm border border-amber-200">
+    1 Corintios 12:12
+  </div>
+
+  {/* Texto bíblico */}
+  <p className="relative z-10 max-w-3xl mx-auto">
+    De hecho, aunque el cuerpo es uno solo, tiene muchos miembros y todos los miembros, no obstante ser muchos, forman un solo cuerpo. Así sucede con Cristo. Todos fuimos bautizados por un solo Espíritu para constituir un solo cuerpo —ya seamos judíos o no, esclavos o libres—, y a todos se nos dio a beber de un mismo Espíritu.
+  </p>
+</div>
+
 
               {/* Valores */}
               <div className="bg-gradient-to-br from-amber-600 to-amber-700 rounded-2xl p-8 shadow-xl">
