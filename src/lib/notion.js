@@ -165,12 +165,12 @@ export async function getAboutData() {
     const aboutRecord = response.results[0];
     return [{
       id: aboutRecord.id,
-      title: getTextProperty(aboutRecord.properties.Title),
-      description: getTextProperty(aboutRecord.properties.Description),
-      mission: getTextProperty(aboutRecord.properties.Mission),
+      title: getTextProperty(aboutRecord.properties.Titulo),
+      description: getTextProperty(aboutRecord.properties.Descripcion),
+      mission: getTextProperty(aboutRecord.properties.Mision),
       vision: getTextProperty(aboutRecord.properties.Vision),
-      values: getMultilineTextProperty(aboutRecord.properties.Values),
-      image: getTextProperty(aboutRecord.properties['Image']),
+      values: getMultilineTextProperty(aboutRecord.properties.Valores),
+      image: getTextProperty(aboutRecord.properties['Imagen']),
     }];
   } catch (error) {
     console.error('Error al obtener datos de "Sobre nosotros" desde la base:', error);
@@ -182,7 +182,10 @@ export async function getAboutData() {
 function pageToHeroData(page) {
   return {
     id: page.id,
-    title: getTextProperty(page.properties.Title),
+    // *************************************************************************
+    // CAMBIADO: Ahora usamos la columna personalizada "Titulo" en lugar de "Title"
+    title: getTextProperty(page.properties['Titulo']), // <-- AQUÍ: Usamos 'Titulo'
+    // *************************************************************************
     subtitle: getTextProperty(page.properties.Subtitle),
     description: getTextProperty(page.properties.Description),
     ctaText: getTextProperty(page.properties.CTAText) || 'Suscríbete',
@@ -218,7 +221,7 @@ function pageToTestimonialData(page) {
     name: getTextProperty(page.properties.Nombre),
     testimonial: getTextProperty(page.properties.Testimonio),
     date: getDateProperty(page.properties.Fecha),
-    location: getTextProperty(page.properties.Ubicacion),
+    location: getTextProperty(page.properties.Pais),
   };
 }
 

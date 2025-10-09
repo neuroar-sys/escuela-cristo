@@ -8,13 +8,13 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: {
-    default: 'Escuela de Cristo Colectivo | Comunidad Cristiana',
-    template: '%s | Escuela de Cristo Colectivo',
+    default: 'Escuela del Cristo Colectivo | Comunidad Cristiana',
+    template: '%s | Escuela del Cristo Colectivo',
   },
-  description: 'Un espacio de aprendizaje, crecimiento espiritual y conexión con otros creyentes de todo el mundo.',
+  description: 'Escuela del Cristo Colectivo es una comunidad nacida en la Obra Apostólica, dedicada a edificar el Cuerpo de Cristo con un propósito claro y eterno: que Cristo sea formado en nosotros.',
   openGraph: {
-    title: 'Escuela de Cristo Colectivo | Comunidad Cristiana',
-    description: 'Un espacio de aprendizaje, crecimiento espiritual y conexión con otros creyentes de todo el mundo.',
+    title: 'Escuela del Cristo Colectivo | Comunidad Cristiana',
+    description: 'Escuela del Cristo Colectivo es una comunidad nacida en la Obra Apostólica, dedicada a edificar el Cuerpo de Cristo con un propósito claro y eterno: que Cristo sea formado en nosotros.',
     url: 'https://escuela-cristo.vercel.app/',
     images: ['/images/og-image.jpg'],
   },

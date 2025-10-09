@@ -1,24 +1,14 @@
 // src/components/hero/Hero.js
-import { getHeroData, getLatestVideos } from '@/lib/notion';
+import { getHeroData } from '@/lib/notion';
 
 export default async function Hero() {
   const heroData = await getHeroData();
   const hero = heroData[0] || {
-    title: "Escuela de Cristo Colectivo",
+    title: "Escuela del Cristo Colectivo",
     subtitle: "Edificando el Cuerpo de Cristo por medio de la Obra Apostólica 🚧 ",
-    description: "Un espacio de aprendizaje, crecimiento espiritual y conexión con otros creyentes de todo el mundo. Únete a nuestras transmisiones en vivo.",
+    description: "Escuela del Cristo Colectivo es una comunidad nacida en la Obra Apostólica, dedicada a edificar el Cuerpo de Cristo con un propósito claro y eterno: que Cristo sea formado en nosotros.",
     ctaText: "Suscríbete a nuestro canal",
-    ctaLink: "https://www.youtube.com/@JoaquinPensa",
-  };
-
-  // Obtenemos los últimos videos de Notion
-  const latestVideos = await getLatestVideos();
-  // Tomamos el primer video de la lista (el más reciente, según el orden en Notion o el sort definido)
-  const latestVideo = latestVideos[0] || {
-    // Valores por defecto si no hay videos en Notion
-    youtubeId: 'MrhB9D2f2EI', // ID del video de ejemplo que mencionaste
-    title: 'Último video del vivo',
-    description: 'Última transmisión en vivo de Escuela de Cristo Colectivo.'
+    ctaLink: "https://www.youtube.com/@JoaquinPensa", // Enlace por defecto
   };
 
   return (
@@ -37,7 +27,7 @@ export default async function Hero() {
             </p>
             <div className="flex flex-wrap gap-4">
               <a
-                href={hero.ctaLink}
+                href={hero.ctaLink} // Usamos el enlace obtenido de Notion
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white rounded-md font-medium hover:bg-amber-700 transition-colors"
@@ -54,12 +44,12 @@ export default async function Hero() {
           </div>
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
             {/* Contenedor con aspect ratio 16:9 */}
-            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}> {/* 16:9 Aspect Ratio (9 / 16 * 100%) */}
+            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
               {/* Iframe que ocupa el 100% del contenedor relativo */}
               <iframe
                 className="absolute top-0 left-0 w-full h-full rounded-xl"
-                src={`https://www.youtube.com/embed/${latestVideo.youtubeId}`}
-                title={latestVideo.title || "Último video del vivo - Escuela de Cristo Colectivo"}
+                src="https://www.youtube.com/embed/MrhB9D2f2EI"
+                title="Último video del vivo - Escuela de Cristo Colectivo"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
