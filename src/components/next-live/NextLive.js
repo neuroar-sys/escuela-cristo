@@ -26,7 +26,7 @@ export default async function NextLive({ id }) {
           </span>
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Únete a nuestra próxima transmisión</h2>
           <p className="text-xl text-gray-600">
-            No te pierdas nuestro estudio bíblico en vivo, donde profundizaremos en la Palabra de Dios y compartiremos momentos de oración juntos.
+            No te pierdas nuestro estudio bíblico en vivo, donde profundizaremos en la Palabra de Dios.
           </p>
         </div>
 

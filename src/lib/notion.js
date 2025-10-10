@@ -15,8 +15,10 @@ export const DATABASE_IDS = {
   NEXT_LIVE: process.env.NOTION_NEXT_LIVE_DB_ID || '',
   TESTIMONIALS: process.env.NOTION_TESTIMONIALS_DB_ID || '',
   ABOUT: process.env.NOTION_ABOUT_DB_ID || '',
-  QUESTIONS: process.env.NOTION_QUESTIONS_DB_ID || '', // Base para preguntas de Fillout
+  QUESTIONS: process.env.NOTION_QUESTIONS_DB_ID || '',
+  EDIFICADORES: process.env.NOTION_EDIFICADORES_DB_ID || '',
 };
+
 
 // --- FUNCIONES PARA OBTENER DATOS ---
 export async function getHeroData() {
@@ -45,23 +47,18 @@ export async function getLatestVideos() {
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.LATEST_VIDEOS,
-      filter: {
-        property: 'Published',
-        checkbox: {
-          equals: true
-        }
-      },
-      sorts: [
-        { property: 'Date', direction: 'descending' }
-      ],
+      sorts: [{ property: 'Fecha', direction: 'descending' }],
       page_size: 6
     });
+
     return response.results.map(pageToVideoData);
   } catch (error) {
-    console.error('Error al obtener los últimos videos:', error);
+    console.error('Error al obtener últimos videos:', error);
     return [];
   }
 }
+
+
 
 export async function getNextLive() {
   if (!DATABASE_IDS.NEXT_LIVE) {
@@ -73,13 +70,13 @@ export async function getNextLive() {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.NEXT_LIVE,
       filter: {
-        property: 'Date',
+        property: 'Fecha',
         date: {
           after: new Date().toISOString()
         }
       },
       sorts: [
-        { property: 'Date', direction: 'ascending' }
+        { property: 'Fecha', direction: 'ascending' }
       ],
       page_size: 1
     });
@@ -88,6 +85,21 @@ export async function getNextLive() {
     console.error('Error al obtener el próximo vivo:', error);
     return [];
   }
+}
+export async function getEdificadores() {
+  const response = await notion.databases.query({
+    database_id: DATABASE_IDS.EDIFICADORES,
+    filter: {
+      property: 'Publicada',
+      checkbox: { equals: true }
+    },
+    sorts: [
+      { property: 'Fecha', direction: 'descending' }
+    ],
+    page_size: 6
+  });
+
+  return response.results.map(pageToEdificadorData);
 }
 
 export async function getTestimonials() {
@@ -196,13 +208,15 @@ function pageToHeroData(page) {
 function pageToVideoData(page) {
   return {
     id: page.id,
-    title: getTextProperty(page.properties.Title),
-    description: getTextProperty(page.properties.Description),
+    title: getTextProperty(page.properties.Titulo),
+    description: getTextProperty(page.properties.Descripcion),
     youtubeId: getTextProperty(page.properties.YouTubeID),
-    date: getDateProperty(page.properties.Date),
-    category: getTextProperty(page.properties.Category),
+    date: getDateProperty(page.properties.Fecha),
+    category: page.properties.Categoria?.multi_select?.map(opt => opt.name) || [],
   };
 }
+
+
 
 function pageToNextLiveData(page) {
   return {
@@ -214,6 +228,20 @@ function pageToNextLiveData(page) {
     youtubeLink: getUrlProperty(page.properties.YoutubeLink) || '#', // <-- También usamos getUrlProperty para enlaces
   };
 }
+
+function pageToEdificadorData(page) {
+  return {
+    id: page.id,
+    title: getTextProperty(page.properties.Titulo),
+    description: getTextProperty(page.properties.Descripcion),
+    youtubeId: getTextProperty(page.properties.YouTubeID),
+    date: getDateProperty(page.properties.Fecha),
+    category: page.properties.Categoria?.multi_select?.map(opt => opt.name) || [],
+    published: page.properties.Publicada?.checkbox || false,
+  };
+}
+
+
 
 function pageToTestimonialData(page) {
   return {

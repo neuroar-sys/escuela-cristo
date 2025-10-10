@@ -1,6 +1,6 @@
 {
-  "name": "escuela-cristo-colectivo",
-  "version": "0.1.0",
+  "name": "escuela-cristo",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
