@@ -44,10 +44,17 @@ export default async function LatestVideos({ id }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videoList.map((video) => (
-            <VideoCard key={video.id} video={video} />
-          ))}
-        </div>
+  {videoList.map((video, index) => (
+    <div
+      key={video.id}
+      style={{ animationDelay: `${index * 100}ms` }}
+      className="animate-fade-in"
+    >
+      <VideoCard video={video} />
+    </div>
+  ))}
+</div>
+
 
         <div className="mt-12 text-center">
           <a

@@ -6,7 +6,8 @@ export function VideoCard({ video }) {
   const formattedDate = video.date ? format(new Date(video.date), "d 'de' MMM", { locale: es }) : '';
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow animate-fade-in">
+
       <div className="relative pb-[56.25%] h-0">
         {video.youtubeId ? (
           <iframe
