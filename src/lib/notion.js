@@ -221,13 +221,13 @@ function pageToVideoData(page) {
 function pageToNextLiveData(page) {
   return {
     id: page.id,
-    title: getTextProperty(page.properties.Title),
-    description: getTextProperty(page.properties.Description),
-    date: getDateProperty(page.properties.Date),
-    time: getTextProperty(page.properties.Time),
-    youtubeLink: getUrlProperty(page.properties.YoutubeLink) || '#', // <-- También usamos getUrlProperty para enlaces
+    title: getTextProperty(page.properties.Nombre),
+    description: getTextProperty(page.properties.Descripcion),
+    date: getDateProperty(page.properties.Fecha), // ← incluye fecha y hora
+    youtubeLink: getUrlProperty(page.properties.Canal) || '#',
   };
 }
+
 
 function pageToEdificadorData(page) {
   return {
