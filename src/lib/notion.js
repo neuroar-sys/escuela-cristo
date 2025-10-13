@@ -47,8 +47,14 @@ export async function getLatestVideos() {
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.LATEST_VIDEOS,
+      filter: {
+        property: 'Publicado',
+        select: {
+          equals: 'Sí',
+        },
+      },
       sorts: [{ property: 'Fecha', direction: 'descending' }],
-      page_size: 6
+      page_size: 3,
     });
 
     return response.results.map(pageToVideoData);
@@ -57,7 +63,6 @@ export async function getLatestVideos() {
     return [];
   }
 }
-
 
 
 export async function getNextLive() {
@@ -91,16 +96,17 @@ export async function getEdificadores() {
     database_id: DATABASE_IDS.EDIFICADORES,
     filter: {
       property: 'Publicada',
-      checkbox: { equals: true }
+      select: { equals: 'Sí' }
     },
     sorts: [
       { property: 'Fecha', direction: 'descending' }
     ],
-    page_size: 6
+    page_size: 3
   });
 
   return response.results.map(pageToEdificadorData);
 }
+
 
 export async function getTestimonials() {
   if (!DATABASE_IDS.TESTIMONIALS) {
@@ -113,8 +119,8 @@ export async function getTestimonials() {
       database_id: DATABASE_IDS.TESTIMONIALS,
       filter: {
         property: 'Publicado',
-        checkbox: {
-          equals: true
+        select: {
+          equals: 'Sí'
         }
       },
       sorts: [
@@ -122,12 +128,14 @@ export async function getTestimonials() {
       ],
       page_size: 8
     });
+
     return response.results.map(pageToTestimonialData);
   } catch (error) {
     console.error('Error al obtener testimonios:', error);
     return [];
   }
 }
+
 
 // --- CORREGIDA: Función para obtener preguntas de los miembros ---
 export async function getMemberQuestions() {
@@ -140,22 +148,24 @@ export async function getMemberQuestions() {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.QUESTIONS,
       filter: {
-        property: 'Publicada', // Usamos 'Publicada' en lugar de 'Answered'
-        checkbox: {
-          equals: true // Solo preguntas publicadas
+        property: 'Publicada',
+        select: {
+          equals: 'Sí'
         }
       },
       sorts: [
-        { property: 'Fecha', direction: 'descending' } // Ordenar por fecha descendente
+        { property: 'Fecha', direction: 'descending' }
       ],
-      page_size: 10 // Limitar a las últimas 10 preguntas
+      page_size: 10
     });
+
     return response.results.map(pageToMemberQuestionData);
   } catch (error) {
     console.error('Error al obtener preguntas de los miembros desde Notion:', error);
     return [];
   }
 }
+
 
 export async function getAboutData() {
   if (!DATABASE_IDS.ABOUT) {
