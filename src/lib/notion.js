@@ -1,14 +1,7 @@
-// src/lib/notion.js
 import { Client } from '@notionhq/client';
 
-// Inicializa el cliente de Notion con la clave de API
-// Esta clave NUNCA debe estar expuesta en el código del cliente
-const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-});
+const notion = new Client({ auth: process.env.NOTION_API_KEY });
 
-// IDs de las bases de datos de Notion
-// Estos IDs tampoco deben estar expuestos en el código del cliente
 export const DATABASE_IDS = {
   HERO: process.env.NOTION_HERO_DB_ID || '',
   LATEST_VIDEOS: process.env.NOTION_LATEST_VIDEOS_DB_ID || '',
@@ -19,316 +12,207 @@ export const DATABASE_IDS = {
   EDIFICADORES: process.env.NOTION_EDIFICADORES_DB_ID || '',
 };
 
-
-// --- FUNCIONES PARA OBTENER DATOS ---
+// --- HERO ---
 export async function getHeroData() {
-  if (!DATABASE_IDS.HERO) {
-    console.error('NOTION_HERO_DB_ID no está definido');
-    return [];
-  }
-
+  if (!DATABASE_IDS.HERO) return [];
   try {
-    const response = await notion.databases.query({
-      database_id: DATABASE_IDS.HERO,
-    });
-    return response.results.map(pageToHeroData);
+    const response = await notion.databases.query({ database_id: DATABASE_IDS.HERO });
+    return response.results.map(page => ({
+      id: page.id,
+      title: getText(page.properties.Titulo),
+      subtitle: getText(page.properties.Subtitle),
+      description: getText(page.properties.Description),
+      ctaText: getText(page.properties.CTAText),
+      ctaLink: getUrl(page.properties.CTALink),
+    }));
   } catch (error) {
-    console.error('Error al obtener datos del Hero:', error);
+    console.error('Error en getHeroData:', error);
     return [];
   }
 }
 
+// --- ÚLTIMOS VIDEOS ---
 export async function getLatestVideos() {
-  if (!DATABASE_IDS.LATEST_VIDEOS) {
-    console.error('NOTION_LATEST_VIDEOS_DB_ID no está definido');
-    return [];
-  }
-
+  if (!DATABASE_IDS.LATEST_VIDEOS) return [];
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.LATEST_VIDEOS,
       filter: {
         property: 'Publicado',
-        select: {
-          equals: 'Sí',
-        },
+        status: { equals: 'Si' } // ← CORREGIDO
       },
       sorts: [{ property: 'Fecha', direction: 'descending' }],
       page_size: 3,
     });
-
-    return response.results.map(pageToVideoData);
+    return response.results.map(page => ({
+      id: page.id,
+      title: getText(page.properties.Titulo),
+      description: getText(page.properties.Descripcion),
+      youtubeId: getText(page.properties.YouTubeID),
+      date: getDate(page.properties.Fecha),
+      category: getMultiSelect(page.properties.Categoria),
+    }));
   } catch (error) {
-    console.error('Error al obtener últimos videos:', error);
+    console.error('Error en getLatestVideos:', error);
     return [];
   }
 }
 
 
-export async function getNextLive() {
-  if (!DATABASE_IDS.NEXT_LIVE) {
-    console.error('NOTION_NEXT_LIVE_DB_ID no está definido');
-    return [];
-  }
-
+// --- EDIFICADORES ---
+export async function getEdificadores() {
+  if (!DATABASE_IDS.EDIFICADORES) return [];
   try {
     const response = await notion.databases.query({
-      database_id: DATABASE_IDS.NEXT_LIVE,
+      database_id: DATABASE_IDS.EDIFICADORES,
       filter: {
-        property: 'Fecha',
-        date: {
-          after: new Date().toISOString()
-        }
+        property: 'Publicado',
+        status: { equals: 'Si' }
       },
-      sorts: [
-        { property: 'Fecha', direction: 'ascending' }
-      ],
-      page_size: 1
+      sorts: [{ property: 'Fecha', direction: 'descending' }],
+      page_size: 3,
     });
-    return response.results.map(pageToNextLiveData);
+    return response.results.map(page => ({
+      id: page.id,
+      title: getText(page.properties.Titulo),
+      description: getText(page.properties.Descripcion),
+      youtubeId: getText(page.properties.YouTubeID),
+      date: getDate(page.properties.Fecha),
+      category: getMultiSelect(page.properties.Categoria),
+      published: page.properties.Publicado?.status?.name === 'Si', // ✅ agregado
+    }));
   } catch (error) {
-    console.error('Error al obtener el próximo vivo:', error);
+    console.error('Error en getEdificadores:', error);
     return [];
   }
 }
-export async function getEdificadores() {
-  const response = await notion.databases.query({
-    database_id: DATABASE_IDS.EDIFICADORES,
-    filter: {
-      property: 'Publicado',
-      select: { equals: 'Sí' }
-    },
-    sorts: [
-      { property: 'Fecha', direction: 'descending' }
-    ],
-    page_size: 3
-  });
-
-  return response.results.map(pageToEdificadorData);
-}
 
 
+// --- TESTIMONIOS ---
 export async function getTestimonials() {
-  if (!DATABASE_IDS.TESTIMONIALS) {
-    console.error('NOTION_TESTIMONIALS_DB_ID no está definido');
-    return [];
-  }
-
+  if (!DATABASE_IDS.TESTIMONIALS) return [];
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.TESTIMONIALS,
       filter: {
         property: 'Publicado',
-        select: {
-          equals: 'Sí'
-        }
+        status: { equals: 'Si' } // ← CORREGIDO
       },
-      sorts: [
-        { property: 'Fecha', direction: 'descending' }
-      ],
-      page_size: 8
+      sorts: [{ property: 'Fecha', direction: 'descending' }],
+      page_size: 8,
     });
-
-    return response.results.map(pageToTestimonialData);
+    return response.results.map(page => ({
+      id: page.id,
+      name: getText(page.properties.Nombre),
+      testimonial: getText(page.properties.Testimonio),
+      date: getDate(page.properties.Fecha),
+      location: getText(page.properties.Pais),
+    }));
   } catch (error) {
-    console.error('Error al obtener testimonios:', error);
+    console.error('Error en getTestimonials:', error);
     return [];
   }
 }
 
-
-// --- CORREGIDA: Función para obtener preguntas de los miembros ---
+// --- PREGUNTAS DE MIEMBROS ---
 export async function getMemberQuestions() {
-  if (!DATABASE_IDS.QUESTIONS) {
-    console.error('NOTION_QUESTIONS_DB_ID no está definido');
-    return [];
-  }
-
+  if (!DATABASE_IDS.QUESTIONS) return [];
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.QUESTIONS,
       filter: {
         property: 'Publicado',
-        select: {
-          equals: 'Sí'
-        }
+        status: { equals: 'Si' } // ← CORREGIDO
       },
-      sorts: [
-        { property: 'Fecha', direction: 'descending' }
-      ],
-      page_size: 10
+      sorts: [{ property: 'Fecha', direction: 'descending' }],
+      page_size: 10,
     });
-
-    return response.results.map(pageToMemberQuestionData);
+    return response.results.map(page => ({
+      id: page.id,
+      question: getText(page.properties.Pregunta),
+      askedBy: getText(page.properties.Nombre),
+      country: getText(page.properties.Pais),
+      date: getDate(page.properties.Fecha),
+    }));
   } catch (error) {
-    console.error('Error al obtener preguntas de los miembros desde Notion:', error);
+    console.error('Error en getMemberQuestions:', error);
     return [];
   }
 }
 
-
-export async function getAboutData() {
-  if (!DATABASE_IDS.ABOUT) {
-    console.error('NOTION_ABOUT_DB_ID no está definido');
+// --- PRÓXIMO VIVO ---
+export async function getNextLive() {
+  if (!DATABASE_IDS.NEXT_LIVE) return [];
+  try {
+    const response = await notion.databases.query({
+      database_id: DATABASE_IDS.NEXT_LIVE,
+      filter: {
+        property: 'Fecha',
+        date: { after: new Date().toISOString() },
+      },
+      sorts: [{ property: 'Fecha', direction: 'ascending' }],
+      page_size: 1,
+    });
+    return response.results.map(page => ({
+      id: page.id,
+      title: getText(page.properties.Nombre),
+      description: getText(page.properties.Descripcion),
+      date: getDate(page.properties.Fecha),
+      youtubeLink: getUrl(page.properties.Canal),
+    }));
+  } catch (error) {
+    console.error('Error en getNextLive:', error);
     return [];
   }
+}
 
+// --- SOBRE NOSOTROS ---
+export async function getAboutData() {
+  if (!DATABASE_IDS.ABOUT) return [];
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.ABOUT,
-      page_size: 1
+      page_size: 1,
     });
-
-    if (response.results.length === 0) {
-      console.warn('No se encontraron registros en la base de datos ABOUT.');
-      return [];
-    }
-
-    const aboutRecord = response.results[0];
+    if (response.results.length === 0) return [];
+    const page = response.results[0];
     return [{
-      id: aboutRecord.id,
-      title: getTextProperty(aboutRecord.properties.Titulo),
-      description: getTextProperty(aboutRecord.properties.Descripcion),
-      mission: getTextProperty(aboutRecord.properties.Mision),
-      vision: getTextProperty(aboutRecord.properties.Vision),
-      values: getMultilineTextProperty(aboutRecord.properties.Valores),
-      image: getTextProperty(aboutRecord.properties['Imagen']),
+      id: page.id,
+      title: getText(page.properties.Titulo),
+      description: getText(page.properties.Descripcion),
+      mission: getText(page.properties.Mision),
+      vision: getText(page.properties.Vision),
+      values: getMultiline(page.properties.Valores),
+      image: getUrl(page.properties.Imagen),
     }];
   } catch (error) {
-    console.error('Error al obtener datos de "Sobre nosotros" desde la base:', error);
+    console.error('Error en getAboutData:', error);
     return [];
   }
 }
 
-// --- FUNCIONES DE MAPEO ---
-function pageToHeroData(page) {
-  return {
-    id: page.id,
-    // *************************************************************************
-    // CAMBIADO: Ahora usamos la columna personalizada "Titulo" en lugar de "Title"
-    title: getTextProperty(page.properties['Titulo']), // <-- AQUÍ: Usamos 'Titulo'
-    // *************************************************************************
-    subtitle: getTextProperty(page.properties.Subtitle),
-    description: getTextProperty(page.properties.Description),
-    ctaText: getTextProperty(page.properties.CTAText) || 'Suscríbete',
-     ctaLink: getUrlProperty(page.properties.CTALink) || 'https://www.youtube.com/@JoaquinPensa',
-  };
-}
-
-function pageToVideoData(page) {
-  return {
-    id: page.id,
-    title: getTextProperty(page.properties.Titulo),
-    description: getTextProperty(page.properties.Descripcion),
-    youtubeId: getTextProperty(page.properties.YouTubeID),
-    date: getDateProperty(page.properties.Fecha),
-    category: page.properties.Categoria?.multi_select?.map(opt => opt.name) || [],
-  };
-}
-
-
-
-function pageToNextLiveData(page) {
-  return {
-    id: page.id,
-    title: getTextProperty(page.properties.Nombre),
-    description: getTextProperty(page.properties.Descripcion),
-    date: getDateProperty(page.properties.Fecha), // ← incluye fecha y hora
-    youtubeLink: getUrlProperty(page.properties.Canal) || '#',
-  };
-}
-
-
-function pageToEdificadorData(page) {
-  return {
-    id: page.id,
-    title: getTextProperty(page.properties.Titulo),
-    description: getTextProperty(page.properties.Descripcion),
-    youtubeId: getTextProperty(page.properties.YouTubeID),
-    date: getDateProperty(page.properties.Fecha),
-    category: page.properties.Categoria?.multi_select?.map(opt => opt.name) || [],
-    published: page.properties.Publicada?.checkbox || false,
-  };
-}
-
-
-
-function pageToTestimonialData(page) {
-  return {
-    id: page.id,
-    name: getTextProperty(page.properties.Nombre),
-    testimonial: getTextProperty(page.properties.Testimonio),
-    date: getDateProperty(page.properties.Fecha),
-    location: getTextProperty(page.properties.Pais),
-  };
-}
-
-// --- CORREGIDA: Función de mapeo para preguntas de miembros ---
-function pageToMemberQuestionData(page) {
-  return {
-    id: page.id,
-    // *************************************************************************
-    // USAMOS LOS NOMBRES EXACTOS DE LAS COLUMNAS EN TU BASE DE DATOS NOTION
-    question: getTextProperty(page.properties['Pregunta']), // Columna 'Pregunta'
-    askedBy: getTextProperty(page.properties['Nombre']),    // Columna 'Nombre'
-    country: getTextProperty(page.properties['Pais']),      // Columna 'Pais'
-    date: getDateProperty(page.properties['Fecha']) || page.created_time, // Columna 'fecha'
-    // *************************************************************************
-  };
-}
-
-function pageToAboutData(page) {
-  return {
-    id: page.id,
-    title: getTextProperty(page.properties.Title), // Asumiendo propiedad 'Title'
-    description: getTextProperty(page.properties.Description), // Asumiendo propiedad 'Description'
-    mission: getTextProperty(page.properties.Mission), // Asumiendo propiedad 'Mission'
-    vision: getTextProperty(page.properties.Vision), // Asumiendo propiedad 'Vision'
-    values: getMultilineTextProperty(page.properties.Values), // Asumiendo propiedad 'Values'
-    // *************************************************************************
-    // CORREGIDO: Ahora usamos getTextProperty para una URL simple
-    image: getTextProperty(page.properties['Image']), // <-- Cambia 'Image' por el NOMBRE EXACTO de tu columna en Notion
-    // *************************************************************************
-  };
-}
-
 // --- FUNCIONES AUXILIARES ---
-function getTextProperty(property) {
-  if (!property || !property.rich_text) return '';
-  return property.rich_text.map(text => text.plain_text).join('');
+function getText(prop) {
+  return prop?.rich_text?.map(t => t.plain_text).join('') || '';
 }
 
-function getMultilineTextProperty(property) {
-  if (!property || !property.rich_text) return [];
-  return property.rich_text
-    .map(text => text.plain_text)
-    .filter(content => content.trim() !== '');
+function getMultiline(prop) {
+  return prop?.rich_text?.map(t => t.plain_text).filter(t => t.trim() !== '') || [];
 }
 
-function getDateProperty(property) {
-  if (!property || !property.date) return null;
-  return property.date.start;
+function getDate(prop) {
+  return prop?.date?.start || null;
 }
-// *************************************************************************
-// NUEVA FUNCIÓN AUXILIAR: Para obtener URLs de archivos o enlaces externos
-function getUrlProperty(property) {
-  if (!property) return '';
-  
-  // Si es una propiedad URL simple
-  if (property.url) {
-    return property.url;
+
+function getUrl(prop) {
+  if (prop?.url) return prop.url;
+  if (prop?.files?.length > 0) {
+    const file = prop.files[0];
+    return file.file?.url || file.external?.url || '';
   }
-  
-  // Si es una propiedad Files (archivos subidos a Notion)
-  if (property.files && property.files.length > 0) {
-    const file = property.files[0];
-    if (file.file) {
-      return file.file.url; // URL temporal de archivos subidos a Notion
-    } else if (file.external) {
-      return file.external.url; // URL de archivos externos
-    }
-  }
-  
-  return ''; // Si no hay URL válida
+  return '';
 }
-// *************************************************************************
+
+function getMultiSelect(prop) {
+  return prop?.multi_select?.map(opt => opt.name) || [];
+}
