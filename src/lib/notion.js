@@ -95,7 +95,7 @@ export async function getEdificadores() {
   const response = await notion.databases.query({
     database_id: DATABASE_IDS.EDIFICADORES,
     filter: {
-      property: 'Publicada',
+      property: 'Publicado',
       select: { equals: 'Sí' }
     },
     sorts: [
@@ -148,7 +148,7 @@ export async function getMemberQuestions() {
     const response = await notion.databases.query({
       database_id: DATABASE_IDS.QUESTIONS,
       filter: {
-        property: 'Publicada',
+        property: 'Publicado',
         select: {
           equals: 'Sí'
         }
